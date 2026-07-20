@@ -1,0 +1,38 @@
+# dependencies
+/node_modules
+/.pnpm-store
+
+# next.js build output
+/.next/
+/out/
+
+# Capacitor
+/android/app/build/
+/android/.gradle/
+/android/build/
+/android/local.properties
+/ios/App/App.xcodeproj/project.xcworkspace
+/ios/App/Pods/
+
+# production
+/build
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+.env
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# OS
+.DS_Store
+Thumbs.db
