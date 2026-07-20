@@ -13,7 +13,8 @@ export default function RootLayout({ children }) {
         <meta name="theme-color" content="#0a0a0f" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/logo.png" />
         {/* Inline script: read theme before first paint to prevent flash */}
         <script
           dangerouslySetInnerHTML={{

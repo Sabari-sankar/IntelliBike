@@ -96,7 +96,7 @@ export default function Header({ title, showVehicleSwitch = false }) {
       `}</style>
 
       <header className="header">
-        <span className="header-logo">⛽</span>
+        <img src="/logo.png" alt="IntelliBike" style={{ width: 28, height: 28, borderRadius: 8, objectFit: 'cover' }} />
         <span className="header-title">{title || 'IntelliBike'}</span>
 
         <div className="header-actions">

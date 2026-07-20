@@ -26,7 +26,7 @@ export default function SetupPage() {
         background: 'radial-gradient(ellipse at top, rgba(245,158,11,0.08) 0%, var(--bg) 60%)'
       }}>
         {/* Hero */}
-        <div style={{ fontSize: 72, marginBottom: 8, lineHeight: 1 }}>⛽</div>
+        <img src="/logo.png" alt="IntelliBike Logo" style={{ width: 84, height: 84, borderRadius: 20, marginBottom: 16, boxShadow: '0 8px 32px rgba(245,158,11,0.25)', objectFit: 'cover' }} />
         <h1 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: 8 }}>
           Welcome to <span style={{ color: 'var(--primary)' }}>IntelliBike</span>
         </h1>
