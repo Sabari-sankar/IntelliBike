@@ -107,12 +107,16 @@ function recalculateVehicleMileages(vehicleId) {
   // Re-calculate mileage for each leg
   for (let i = 0; i < vehicleLogs.length; i++) {
     if (i === 0) {
+  // Re-calculate mileage for each leg using the fuel from the PREVIOUS fill
+  for (let i = 0; i < vehicleLogs.length; i++) {
+    if (i === 0) {
       vehicleLogs[i].mileage = null;
     } else {
       const prev = vehicleLogs[i - 1];
       const kmDriven = vehicleLogs[i].odometerKm - prev.odometerKm;
-      if (kmDriven > 0 && vehicleLogs[i].liters > 0) {
-        vehicleLogs[i].mileage = parseFloat((kmDriven / vehicleLogs[i].liters).toFixed(2));
+      // Mileage = Distance Driven (current_odo - prev_odo) ÷ Previous Fill's Liters
+      if (kmDriven > 0 && prev.liters > 0) {
+        vehicleLogs[i].mileage = parseFloat((kmDriven / prev.liters).toFixed(2));
       } else {
         vehicleLogs[i].mileage = null;
       }
@@ -217,8 +221,8 @@ export const petrolStorage = {
     const lastOdo = sorted[sorted.length - 1]?.odometerKm || 0;
     const totalKm = sorted.length > 1 ? lastOdo - firstOdo : 0;
 
-    // Fuel consumed after first initial fill
-    const fuelUsedForLegs = sorted.slice(1).reduce((s, l) => s + l.liters, 0);
+    // Fuel consumed during completed legs = sum of liters of all fills EXCEPT the last current fill
+    const fuelUsedForLegs = sorted.slice(0, -1).reduce((s, l) => s + l.liters, 0);
 
     const avgMileage = (totalKm > 0 && fuelUsedForLegs > 0)
       ? parseFloat((totalKm / fuelUsedForLegs).toFixed(2))

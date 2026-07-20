@@ -155,7 +155,7 @@ export default function PetrolPage() {
                     const prevLogItem = logs[i + 1];
                     if (prevLogItem && log.odometerKm > prevLogItem.odometerKm) {
                       const kmDriven = log.odometerKm - prevLogItem.odometerKm;
-                      const calculatedMileage = log.mileage || (kmDriven / log.liters).toFixed(2);
+                      const calculatedMileage = log.mileage || (kmDriven / prevLogItem.liters).toFixed(2);
                       return (
                         <div style={{
                           fontSize: 12, color: 'var(--text)',
@@ -171,7 +171,7 @@ export default function PetrolPage() {
                             🛣️ {prevLogItem.odometerKm.toLocaleString()} km → {log.odometerKm.toLocaleString()} km = <strong>{kmDriven.toLocaleString()} km driven</strong>
                           </div>
                           <div style={{ fontSize: 11, color: 'var(--text-faint)' }}>
-                            📐 Calculation: {kmDriven} km ÷ {log.liters} L = {calculatedMileage} km/L
+                            📐 Calculation: {kmDriven} km ÷ {prevLogItem.liters} L (prev fill) = {calculatedMileage} km/L
                           </div>
                         </div>
                       );

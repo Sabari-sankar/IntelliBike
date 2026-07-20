@@ -45,12 +45,12 @@ export default function PetrolForm({ vehicleId, initial = null, onSave, onCancel
   const displayLiters = fillMode === 'liters' ? form.liters : computedLiters;
   const displayTotal  = fillMode === 'amount' ? form.totalCost : computedTotal;
 
-  // Live mileage calculation based on prev and current odometer & liters
+  // Live mileage calculation based on distance driven & fuel from previous fill
   const currentOdo = parseFloat(form.odometerKm) || 0;
   const prevOdo = prevLog ? prevLog.odometerKm : 0;
   const kmDriven = (prevLog && currentOdo > prevOdo) ? currentOdo - prevOdo : 0;
-  const numLiters = parseFloat(displayLiters) || 0;
-  const liveMileage = (kmDriven > 0 && numLiters > 0) ? (kmDriven / numLiters).toFixed(2) : null;
+  const prevLiters = prevLog ? prevLog.liters : 0;
+  const liveMileage = (kmDriven > 0 && prevLiters > 0) ? (kmDriven / prevLiters).toFixed(2) : null;
 
   const validate = () => {
     const e = {};
@@ -179,7 +179,7 @@ export default function PetrolForm({ vehicleId, initial = null, onSave, onCancel
       )}
 
       {/* Live Mileage Calculation Box */}
-      {prevLog && kmDriven > 0 && numLiters > 0 && (
+      {prevLog && kmDriven > 0 && prevLiters > 0 && (
         <div style={{
           background: 'linear-gradient(135deg, var(--emerald-glow) 0%, rgba(16,185,129,0.05) 100%)',
           border: '1px solid rgba(16,185,129,0.3)',
@@ -195,9 +195,12 @@ export default function PetrolForm({ vehicleId, initial = null, onSave, onCancel
           </div>
           <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.4 }}>
             <div>🛣️ Distance Driven: <strong>{currentOdo.toLocaleString()} km - {prevOdo.toLocaleString()} km = {kmDriven.toLocaleString()} km</strong></div>
-            <div>⛽ Fuel Filled: <strong>{numLiters} L</strong></div>
+            <div>⛽ Fuel Consumed: <strong>{prevLiters} L (from previous fill at {prevOdo.toLocaleString()} km)</strong></div>
             <div style={{ color: 'var(--emerald)', marginTop: 2 }}>
-              📐 Formula: {kmDriven} km ÷ {numLiters} L = <strong>{liveMileage} km/L</strong>
+              📐 Formula: {kmDriven} km ÷ {prevLiters} L = <strong>{liveMileage} km/L</strong>
+            </div>
+            <div style={{ fontSize: 10, color: 'var(--text-faint)', marginTop: 4, fontStyle: 'italic' }}>
+              ℹ️ Today's fuel fill will be used for your next mileage calculation.
             </div>
           </div>
         </div>
