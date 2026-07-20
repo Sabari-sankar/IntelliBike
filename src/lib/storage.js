@@ -104,9 +104,6 @@ function recalculateVehicleMileages(vehicleId) {
     return a.odometerKm - b.odometerKm;
   });
 
-  // Re-calculate mileage for each leg
-  for (let i = 0; i < vehicleLogs.length; i++) {
-    if (i === 0) {
   // Re-calculate mileage for each leg using the fuel from the PREVIOUS fill
   for (let i = 0; i < vehicleLogs.length; i++) {
     if (i === 0) {
