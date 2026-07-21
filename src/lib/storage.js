@@ -273,22 +273,36 @@ export const petrolStorage = {
    */
   getNextRefillEstimate: (vehicleId) => {
     const logs = petrolStorage.getByVehicle(vehicleId);
-    if (logs.length < 2) return null;
-    const stats = petrolStorage.getStats(vehicleId);
-    if (!stats.avgMileage || stats.avgMileage === 0) return null;
+    if (!logs || logs.length === 0) return null;
 
-    const lastLog = logs[0];
-    const avgLiters = stats.totalLiters / stats.totalFills;
-    const kmRange = Math.round(stats.avgMileage * avgLiters);
+    const vehicle = vehicleStorage.getById(vehicleId);
+    const stats = petrolStorage.getStats(vehicleId);
+    const lastLog = logs[0]; // Newest log
+
+    let mileageToUse = stats.avgMileage;
+    let isEstimated = false;
+
+    if (!mileageToUse || mileageToUse <= 0) {
+      isEstimated = true;
+      const typeDefaults = { bike: 45, scooter: 40, car: 14, truck: 6 };
+      mileageToUse = typeDefaults[vehicle?.type] || 35;
+    }
+
+    const avgLiters = (stats.totalFills > 0 && stats.totalLiters > 0)
+      ? (stats.totalLiters / stats.totalFills)
+      : (lastLog.liters || 5);
+
+    const kmRange = Math.round(mileageToUse * avgLiters);
     const estimatedKm = lastLog.odometerKm + kmRange;
 
     return {
       estimatedKm,
       kmRange,
-      avgMileage: stats.avgMileage,
+      avgMileage: parseFloat(mileageToUse.toFixed(1)),
       avgLiters: parseFloat(avgLiters.toFixed(1)),
       lastOdometer: lastLog.odometerKm,
       lastFillDate: lastLog.date,
+      isEstimated,
     };
   },
 };

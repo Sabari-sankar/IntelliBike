@@ -190,7 +190,7 @@ export default function GraphPage() {
   return (
     <>
       <Header title="Analytics" showVehicleSwitch={true} />
-      <div className="page safe-top">
+      <div className="page">
         <div className="page-inner">
 
           {/* Tab Bar */}

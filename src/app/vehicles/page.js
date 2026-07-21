@@ -64,7 +64,7 @@ export default function VehiclesPage() {
   return (
     <>
       <Header title="My Vehicles" />
-      <div className="page safe-top">
+      <div className="page">
         <div className="page-inner">
 
           {/* Vehicle list */}

@@ -37,14 +37,18 @@ export default function Header({ title, showVehicleSwitch = false }) {
       <style>{`
         .header {
           position: fixed; top: 0; left: 0; right: 0;
-          height: var(--header-height);
           background: var(--header-bg);
           backdrop-filter: blur(20px);
           -webkit-backdrop-filter: blur(20px);
           border-bottom: 1px solid var(--border);
+          display: flex; flex-direction: column;
+          padding-top: env(safe-area-inset-top, 0px);
+          z-index: 50;
+        }
+        .header-inner {
+          height: var(--header-height);
           display: flex; align-items: center;
-          padding: env(safe-area-inset-top,0px) 16px 0;
-          z-index: 50; gap: 10px;
+          padding: 0 16px; gap: 10px; width: 100%;
         }
         .header-logo { font-size: 22px; flex-shrink: 0; }
         .header-title { font-size: 17px; font-weight: 700; color: var(--text); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -69,7 +73,7 @@ export default function Header({ title, showVehicleSwitch = false }) {
         }
         .vehicle-btn:hover { border-color: var(--primary); background: var(--primary-glow); }
         .vehicle-picker {
-          position: fixed; top: calc(var(--header-height) + 8px); right: 16px;
+          position: fixed; top: calc(var(--header-height) + env(safe-area-inset-top, 0px) + 8px); right: 16px;
           background: var(--picker-bg); border: 1px solid var(--border-strong);
           border-radius: var(--radius); padding: 8px; z-index: 60; min-width: 200px;
           box-shadow: 0 8px 32px rgba(0,0,0,0.25);
@@ -96,26 +100,28 @@ export default function Header({ title, showVehicleSwitch = false }) {
       `}</style>
 
       <header className="header">
-        <img src="/logo.png" alt="IntelliBike" style={{ width: 28, height: 28, borderRadius: 8, objectFit: 'cover' }} />
-        <span className="header-title">{title || 'IntelliBike'}</span>
+        <div className="header-inner">
+          <img src="/logo.png" alt="IntelliBike" style={{ width: 28, height: 28, borderRadius: 8, objectFit: 'cover' }} />
+          <span className="header-title">{title || 'IntelliBike'}</span>
 
-        <div className="header-actions">
-          {showVehicleSwitch && vehicles.length > 0 && (
-            <button className="vehicle-btn" onClick={() => setShowPicker(!showPicker)}>
-              <span>{VEHICLE_EMOJI[activeVehicle?.type] || '🚗'}</span>
-              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 90 }}>
-                {activeVehicle?.nickname || 'Select'}
-              </span>
-              <span style={{ fontSize: 9, color: 'var(--text-faint)' }}>▼</span>
+          <div className="header-actions">
+            {showVehicleSwitch && vehicles.length > 0 && (
+              <button className="vehicle-btn" onClick={() => setShowPicker(!showPicker)}>
+                <span>{VEHICLE_EMOJI[activeVehicle?.type] || '🚗'}</span>
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 90 }}>
+                  {activeVehicle?.nickname || 'Select'}
+                </span>
+                <span style={{ fontSize: 9, color: 'var(--text-faint)' }}>▼</span>
+              </button>
+            )}
+
+            {/* Theme Toggle */}
+            <button className="theme-btn" onClick={toggleTheme} title="Toggle theme">
+              {theme === 'dark' ? '☀️' : '🌙'}
             </button>
-          )}
 
-          {/* Theme Toggle */}
-          <button className="theme-btn" onClick={toggleTheme} title="Toggle theme">
-            {theme === 'dark' ? '☀️' : '🌙'}
-          </button>
-
-          <Link href="/vehicles" className="header-btn" title="Vehicles">🚗</Link>
+            <Link href="/vehicles" className="header-btn" title="Vehicles">🚗</Link>
+          </div>
         </div>
       </header>
 

@@ -166,7 +166,7 @@ export default function DashboardPage() {
   return (
     <>
       <Header title="Dashboard" showVehicleSwitch={true} />
-      <div className="page safe-top">
+      <div className="page">
         <div className="page-inner">
 
           {/* ── All Vehicles Scroll ─────────────────────────────── */}
@@ -328,38 +328,79 @@ export default function DashboardPage() {
           )}
 
           {/* ── Next Fill Estimate ────────────────────────────── */}
-          {nextRefill && (
-            <div className="section">
-              <div className="section-title">⛽ Next Fill Estimate</div>
-              <div style={{
-                background: 'linear-gradient(135deg, var(--blue-glow) 0%, var(--primary-glow) 100%)',
-                border: '1px solid rgba(59,130,246,0.2)',
-                borderRadius: 16,
-                padding: 16, display: 'flex', gap: 14, alignItems: 'center'
-              }}>
-                <div style={{ fontSize: 36 }}>🎯</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--text)', marginBottom: 2 }}>
-                    ~{nextRefill.estimatedKm.toLocaleString()} km
-                  </div>
-                  <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 6 }}>
-                    Estimated next refill point
-                  </div>
-                  <div style={{ display: 'flex', gap: 12 }}>
-                    <div style={{ fontSize: 11, color: 'var(--text-faint)' }}>
-                      📍 Now: {lastOdometer.toLocaleString()} km
+          {nextRefill && (() => {
+            const kmLeft = nextRefill.estimatedKm - lastOdometer;
+            const isDue = kmLeft <= 0;
+            const isNearDue = kmLeft > 0 && kmLeft <= 30;
+            return (
+              <div className="section">
+                <div className="section-title">⛽ Next Expected Fill</div>
+                <div style={{
+                  background: isDue
+                    ? 'linear-gradient(135deg, var(--red-glow) 0%, rgba(239,68,68,0.04) 100%)'
+                    : 'linear-gradient(135deg, var(--blue-glow) 0%, var(--primary-glow) 100%)',
+                  border: `1px solid ${isDue ? 'rgba(239,68,68,0.25)' : 'rgba(59,130,246,0.2)'}`,
+                  borderRadius: 16, padding: 16,
+                }}>
+                  {/* Top row: icon + target km */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1 }}>
+                      <span style={{ fontSize: 32 }}>{isDue ? '🔴' : isNearDue ? '🟡' : '🎯'}</span>
+                      <div>
+                        <div style={{ fontSize: 11, color: 'var(--text-faint)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                          Fill Expected At
+                        </div>
+                        <div style={{ fontSize: 22, fontWeight: 900, color: isDue ? 'var(--red)' : 'var(--text)' }}>
+                          ~{nextRefill.estimatedKm.toLocaleString()} km
+                        </div>
+                      </div>
                     </div>
-                    <div style={{ fontSize: 11, color: 'var(--text-faint)' }}>
-                      🛣️ Range: ~{nextRefill.kmRange} km
+                    <div style={{
+                      textAlign: 'right',
+                      background: isDue ? 'var(--red-glow)' : isNearDue ? 'var(--primary-glow)' : 'var(--blue-glow)',
+                      border: `1px solid ${isDue ? 'rgba(239,68,68,0.3)' : isNearDue ? 'rgba(245,158,11,0.3)' : 'rgba(59,130,246,0.3)'}`,
+                      borderRadius: 12, padding: '8px 12px'
+                    }}>
+                      <div style={{ fontSize: 16, fontWeight: 800, color: isDue ? 'var(--red)' : isNearDue ? 'var(--primary)' : 'var(--blue)' }}>
+                        {isDue ? 'Fill Now!' : `+${nextRefill.kmRange.toLocaleString()} km`}
+                      </div>
+                      <div style={{ fontSize: 10, color: 'var(--text-faint)' }}>
+                        {isDue ? 'Overdue' : 'expected range'}
+                      </div>
                     </div>
                   </div>
-                  <div style={{ fontSize: 11, color: 'var(--text-faint)', marginTop: 2 }}>
-                    Based on {nextRefill.avgMileage.toFixed(1)} km/L × {nextRefill.avgLiters}L avg fill
+
+                  {/* Range indicator bar */}
+                  <div style={{ marginBottom: 10 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                      <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>📍 Last Fill: <strong>{nextRefill.lastOdometer.toLocaleString()} km</strong></span>
+                      <span style={{ fontSize: 11, color: 'var(--blue)', fontWeight: 700 }}>🎯 Next: ~{nextRefill.estimatedKm.toLocaleString()} km</span>
+                    </div>
+                    <div style={{ height: 6, background: 'var(--border)', borderRadius: 3, overflow: 'hidden' }}>
+                      <div style={{
+                        height: '100%', borderRadius: 3,
+                        width: '100%',
+                        background: 'linear-gradient(90deg, var(--emerald) 0%, var(--primary) 70%, var(--blue) 100%)',
+                      }} />
+                    </div>
+                  </div>
+
+                  {/* Bottom details */}
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    <div style={{ fontSize: 11, color: 'var(--text-faint)', background: 'var(--surface)', borderRadius: 8, padding: '4px 8px' }}>
+                      ⚡ {nextRefill.avgMileage.toFixed(1)} km/L {nextRefill.isEstimated ? '(est.)' : 'avg'}
+                    </div>
+                    <div style={{ fontSize: 11, color: 'var(--text-faint)', background: 'var(--surface)', borderRadius: 8, padding: '4px 8px' }}>
+                      ⛽ ~{nextRefill.avgLiters}L avg fill
+                    </div>
+                    <div style={{ fontSize: 11, color: 'var(--text-faint)', background: 'var(--surface)', borderRadius: 8, padding: '4px 8px' }}>
+                      🛣️ ~{nextRefill.kmRange} km per fill
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* ── Last Fill Summary ─────────────────────────────── */}
           {stats?.lastFill && (

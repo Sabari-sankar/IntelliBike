@@ -69,7 +69,7 @@ export default function PetrolPage() {
   return (
     <>
       <Header title="Petrol Log" showVehicleSwitch={true} />
-      <div className="page safe-top">
+      <div className="page">
         <div className="page-inner">
 
           {/* Summary bar */}

@@ -85,7 +85,7 @@ export default function ServicePage() {
   return (
     <>
       <Header title="Service Records" />
-      <div className="page safe-top">
+      <div className="page">
         <div className="page-inner">
 
           {/* Summary */}

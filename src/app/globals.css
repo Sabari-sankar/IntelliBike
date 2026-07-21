@@ -99,6 +99,7 @@
 :root {
   --nav-height: 72px;
   --header-height: 60px;
+  --header-total-height: calc(var(--header-height) + env(safe-area-inset-top, 0px));
   --radius: 16px;
   --radius-sm: 10px;
   --radius-lg: 24px;
@@ -156,6 +157,16 @@ body {
 /* ─── Safe Areas ─────────────────────────────────────────────────────── */
 .safe-top    { padding-top: env(safe-area-inset-top, 0px); }
 .safe-bottom { padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom, 8px)); }
+
+/* ─── Page Wrapper ───────────────────────────────────────────────────── */
+/* Offsets content below the fixed header (header height + safe area notch) */
+.page {
+  padding-top: calc(var(--header-height) + env(safe-area-inset-top, 0px) + 16px);
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-bottom: 16px;
+  min-height: 100vh;
+}
 
 /* ─── Scrollbar ──────────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 4px; }
