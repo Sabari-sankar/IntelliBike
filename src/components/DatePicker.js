@@ -39,6 +39,7 @@ export default function DatePicker({ value, onChange, label, placeholder = 'Sele
   const [viewMonth, setViewMonth] = useState((parsed || today).getMonth());
   const [yearPickerOpen, setYearPickerOpen] = useState(false);
   const wrapRef = useRef(null);
+  const selectedYearRef = useRef(null);
 
   // Close on outside click
   useEffect(() => {
@@ -51,6 +52,15 @@ export default function DatePicker({ value, onChange, label, placeholder = 'Sele
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
+
+  // Scroll selected year into view when year picker opens
+  useEffect(() => {
+    if (yearPickerOpen === 'year' && selectedYearRef.current) {
+      setTimeout(() => {
+        selectedYearRef.current?.scrollIntoView({ block: 'center', behavior: 'instant' });
+      }, 50);
+    }
+  }, [yearPickerOpen]);
 
   // Sync view to value changes
   useEffect(() => {
@@ -97,9 +107,9 @@ export default function DatePicker({ value, onChange, label, placeholder = 'Sele
     return false;
   };
 
-  // Year picker range: ±50 years
+  // Year picker range: from currentYear + 5 down to 95 years ago
   const currentYear = today.getFullYear();
-  const years = Array.from({ length: 101 }, (_, i) => currentYear - 50 + i).reverse();
+  const years = Array.from({ length: 101 }, (_, i) => currentYear + 5 - i);
 
   const goToday = () => {
     setViewYear(today.getFullYear());
@@ -393,6 +403,7 @@ export default function DatePicker({ value, onChange, label, placeholder = 'Sele
                 {years.map((yr) => (
                   <button
                     key={yr}
+                    ref={yr === viewYear ? selectedYearRef : null}
                     type="button"
                     className={`dp-year-btn${yr === currentYear ? ' current-year' : ''}${yr === viewYear ? ' selected-year' : ''}`}
                     onClick={() => { setViewYear(yr); setYearPickerOpen(false); }}
