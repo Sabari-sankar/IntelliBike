@@ -1,4 +1,5 @@
 import './globals.css';
+import BackButtonHandler from '@/components/BackButtonHandler';
 
 export const metadata = {
   title: 'IntelliBike — Vehicle & Petrol Tracker',
@@ -22,7 +23,10 @@ export default function RootLayout({ children }) {
           }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <BackButtonHandler />
+        {children}
+      </body>
     </html>
   );
 }
