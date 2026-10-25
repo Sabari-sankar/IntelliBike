@@ -34,24 +34,37 @@ jobs:
             npx cap add ios
           fi
           npx cap sync ios
+          # Ensure any Windows backslashes in Package.swift are converted to forward slashes for macOS
+          if [ -f "ios/App/CapApp-SPM/Package.swift" ]; then
+            sed -i '' 's/\\/\//g' ios/App/CapApp-SPM/Package.swift || sed -i 's/\\/\//g' ios/App/CapApp-SPM/Package.swift || true
+          fi
 
-      - name: Build iOS App with Xcode
+      - name: Build iOS App with Xcode (Ad-Hoc Signing)
         run: |
           cd ios/App
-          xcodebuild build \
+          xcodebuild clean build \
             -project App.xcodeproj \
             -scheme App \
             -configuration Release \
             -destination 'generic/platform=iOS' \
             -derivedDataPath ../../build-output \
-            CODE_SIGN_IDENTITY="" \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="-" \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO
+            CODE_SIGNING_ALLOWED=YES \
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            DEVELOPMENT_TEAM=""
 
       - name: Package .IPA File
         run: |
+          APP_PATH=$(find build-output -name "App.app" -type d | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "Error: App.app not found in build-output"
+            exit 1
+          fi
+          echo "Found compiled app at: $APP_PATH"
           mkdir -p ipa-package/Payload
-          cp -r build-output/Build/Products/Release-iphoneos/App.app ipa-package/Payload/
+          cp -r "$APP_PATH" ipa-package/Payload/
           cd ipa-package
           zip -qr IntelliBike.ipa Payload
 
